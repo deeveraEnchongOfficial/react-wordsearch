@@ -1,0 +1,92 @@
+/* .grid {
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+  }
+  
+  .row {
+    display: flex;
+  }
+  
+  .cell {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #666;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .cell.selected, .cell:hover {
+    background-color: #11a7e1;
+    color: #fcfcfc;
+  }
+   */
+
+
+   body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(20, 40px); /* Adjust based on your gridSize */
+    grid-gap: 5px;
+    justify-content: center;
+    background-color: #ffffff;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .row {
+    display: contents;
+  }
+  
+  .cell {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #efefef;
+    color: #333;
+    font-weight: bold;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    border-radius: 5px;
+    user-select: none; /* Prevent user from selecting the text inside cells */
+  }
+  
+  .cell:hover, .cell.selected {
+    background-color: #4a90e2;
+    color: #ffffff;
+  }
+  
+  /* Optional: Add animations for cell selection for a more dynamic feel */
+  @keyframes selectedAnimation {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.1);
+    }
+  }
+  
+  .cell.selected {
+    animation: selectedAnimation 0.2s ease-in-out forwards;
+  }
+
+  .cell.correct {
+    background-color: lightgreen; /* Highlight correctly guessed words */
+  }
+  
