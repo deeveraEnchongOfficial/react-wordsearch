@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './WordSearch.css';
+import WordList from './WordList';
 
 const WordSearch = () => {
   const gridSize = 20;
@@ -120,27 +121,29 @@ const WordSearch = () => {
   };
 
   return (
-    <div className="grid">
-      {grid.map((row, rowIndex) => (
-        <div key={rowIndex} className="row">
-          {row.map((cell, colIndex) => {
-            const isCorrectCell = correctWords.flat().some(pos => pos.row === rowIndex && pos.col === colIndex);
-            const cellClass = isCorrectCell ? 'cell correct' : cell.selected ? 'cell selected' : 'cell';
-            return (
-              <div
-                key={colIndex}
-                className={cellClass}
-                onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
-                onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
-                onMouseUp={handleMouseUp}
-              >
-                {cell.letter}
-              </div>
-            );
-          })}
-        </div>
-      ))}
-    </div>
+    <><WordList wordList={wordList}/>
+      <div className="grid">
+        {grid.map((row, rowIndex) => (
+          <div key={rowIndex} className="row">
+            {row.map((cell, colIndex) => {
+              const isCorrectCell = correctWords.flat().some(pos => pos.row === rowIndex && pos.col === colIndex);
+              const cellClass = isCorrectCell ? 'cell correct' : cell.selected ? 'cell selected' : 'cell';
+              return (
+                  <div
+                    key={colIndex}
+                    className={cellClass}
+                    onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
+                    onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
+                    onMouseUp={handleMouseUp}
+                  >
+                    {cell.letter}
+                  </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+    </>
   );
 };
 
