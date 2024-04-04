@@ -1,17 +1,43 @@
-import React from 'react'
-import WordSearch from './WordSearch';
+import React, { useState, useEffect } from 'react';
+import WordSearch from "./WordSearch";
+import "./WordList.css";
 
-const WordList = ({wordList}) => {
+const WordList = ({ wordList, correctWords }) => {
+  const [completedWords, setCompletedWords] = useState([]);
+
+  useEffect(() => {
+    // Extract the words from correctWords
+    const completed = correctWords.flatMap((item) => {
+      if (Array.isArray(item)) {
+        // Extract the words from the array of objects
+        return item.map((obj) => obj.word);
+      } else {
+        // If it's a string, it's a single word
+        return item;
+      }
+    });
+    setCompletedWords(completed);
+  }, [correctWords]);
+
   return (
     <div>
       <h2>Words:</h2>
-      {/* <p>{wordList}</p> */}
-      <ul style={{listStyleType: "none"}}>
-        {wordList?.map((word, index) => (
-          <li key={index}>{word}</li>
-        ))}
+      <ul>
+        {wordList.map((word, index) => {
+          const isCompleted = completedWords?.includes(word);
+          // console.log(word, isCompleted);
+          // console.log('Status',correctWords);
+          return (
+            <li
+              key={index}
+              className = {isCompleted ? "completed" : ""}
+            >
+              {word}
+            </li>
+          );
+        })}
       </ul>
     </div>
-  )
-}
+  );
+};
 export default WordList;
