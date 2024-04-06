@@ -17,7 +17,7 @@ const WordSearch = () => {
   useEffect(() => {
     generateGrid();
     // eslint-disable-next-line
-  }, []); // Equivalent to componentDidMount in class components
+  }, []);
 
   const generateGrid = () => {
     let initialGrid = Array.from({ length: gridSize }, () =>
@@ -25,10 +25,10 @@ const WordSearch = () => {
     );
 
     const directions = [
-      { x: 0, y: 1 }, // Horizontal
-      { x: 1, y: 0 }, // Vertical
-      { x: 1, y: 1 }, // Diagonal right
-      { x: 1, y: -1 }, // Diagonal left
+      { x: 0, y: 1 },
+      { x: 1, y: 0 },
+      { x: 1, y: 1 },
+      { x: 1, y: -1 },
     ];
 
     wordList.forEach(word => {
@@ -47,8 +47,9 @@ const WordSearch = () => {
       }
     });
 
-    // Fill empty cells with random letters
-    initialGrid = initialGrid.map(row => row.map(cell => cell.letter === '' ? { ...cell, letter: getRandomLetter() } : cell));
+    initialGrid = initialGrid.map(row =>
+      row.map(cell => (cell.letter === '' ? { ...cell, letter: getRandomLetter() } : cell))
+    );
 
     setGrid(initialGrid);
   };
@@ -56,7 +57,13 @@ const WordSearch = () => {
   const canPlaceWord = (grid, word, startPos, direction) => {
     let pos = { ...startPos };
     for (let i = 0; i < word.length; i++) {
-      if (pos.x < 0 || pos.x >= gridSize || pos.y < 0 || pos.y >= gridSize || grid[pos.x][pos.y].letter !== '') {
+      if (
+        pos.x < 0 ||
+        pos.x >= gridSize ||
+        pos.y < 0 ||
+        pos.y >= gridSize ||
+        grid[pos.x][pos.y].letter !== ''
+      ) {
         return false;
       }
       pos.x += direction.x;
@@ -79,41 +86,60 @@ const WordSearch = () => {
     return alphabet[Math.floor(Math.random() * alphabet.length)];
   };
 
+  const handleTouchStart = (event, row, col) => {
+    event.preventDefault(); // Prevent scrolling
+    handleSelectionChange(row, col);
+  };
+
+  const handleTouchMove = (event) => {
+    event.preventDefault(); // Prevent scrolling
+    if (event.touches.length > 0) {
+      const touch = event.touches[0];
+      const target = document.elementFromPoint(touch.clientX, touch.clientY);
+      if (target && target.dataset.row && target.dataset.col) {
+        handleSelectionChange(parseInt(target.dataset.row, 10), parseInt(target.dataset.col, 10));
+      }
+    }
+  };
+
+  const handleTouchEnd = () => {
+    finalizeSelection();
+  };
+
   const handleMouseDown = (row, col) => {
-    const newGrid = grid.map((gridRow, rowIndex) =>
-      gridRow.map((cell, colIndex) => {
-        if (rowIndex === row && colIndex === col) {
-          return { ...cell, selected: true };
-        }
-        return cell;
-      })
-    );
-    setGrid(newGrid);
-    setSelectedCells([{ row, col }]);
+    handleSelectionChange(row, col);
   };
 
   const handleMouseEnter = (row, col) => {
     if (selectedCells.length > 0) {
-      const newGrid = grid.map((gridRow, rowIndex) =>
-        gridRow.map((cell, colIndex) => {
-          if (rowIndex === row && colIndex === col) {
-            return { ...cell, selected: true };
-          }
-          return cell;
-        })
-      );
-      setGrid(newGrid);
-      setSelectedCells([...selectedCells, { row, col }]);
+      handleSelectionChange(row, col);
     }
   };
 
   const handleMouseUp = () => {
+    finalizeSelection();
+  };
+
+  const handleSelectionChange = (row, col) => {
+    const newSelectedCells = [...selectedCells, { row, col }];
+    const newGrid = grid.map((gridRow, rowIndex) =>
+      gridRow.map((cell, colIndex) => ({
+        ...cell,
+        selected: newSelectedCells.some(sc => sc.row === rowIndex && sc.col === colIndex),
+      }))
+    );
+    setGrid(newGrid);
+    setSelectedCells(newSelectedCells);
+  };
+
+  const finalizeSelection = () => {
     const selectedWord = selectedCells.map(({ row, col }) => grid[row][col].letter).join('');
     if (wordList.includes(selectedWord)) {
       setCorrectWords([...correctWords, selectedCells]);
     } else {
-      // Reset selection if word not found, except for correct words
-      const newGrid = grid.map(row => row.map(cell => ({ ...cell, selected: false })));
+      const newGrid = grid.map(row =>
+        row.map(cell => ({ ...cell, selected: false }))
+      );
       setGrid(newGrid);
     }
     setSelectedCells([]);
@@ -133,6 +159,11 @@ const WordSearch = () => {
                 onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
                 onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
                 onMouseUp={handleMouseUp}
+                onTouchStart={(e) => handleTouchStart(e, rowIndex, colIndex)}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+                data-row={rowIndex}
+                data-col={colIndex}
               >
                 {cell.letter}
               </div>
