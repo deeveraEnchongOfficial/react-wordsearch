@@ -35,38 +35,72 @@
     align-items: center;
     height: 100vh;
   }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(20, 40px); /* Adjust based on your gridSize */
+  grid-gap: 5px;
+  justify-content: center;
+  background-color: #ffffff;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 30%;
+}
+
   
+@media(max-width: 1000px){
   .grid {
     display: grid;
-    grid-template-columns: repeat(20, 40px); /* Adjust based on your gridSize */
+    grid-template-columns: repeat(20, 20px); /* Adjust based on your gridSize */
     grid-gap: 5px;
     justify-content: center;
     background-color: #ffffff;
     padding: 10px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 0;
   }
-  
-  .row {
-    display: contents;
   }
+
+.cell {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color:#efefef;
+  color: #333;
+  font-weight: bold;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  border-radius: 5px;
+  user-select: none; /* Prevent user from selecting the text inside cells */
+}
   
+@media(max-width: 1000px){
   .cell {
-    width: 40px;
-    height: 40px;
+    width: 20px;
+    height: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: #efefef;
     color: #333;
     font-weight: bold;
-    font-size: 20px;
+    font-size: 12px;
     cursor: pointer;
     transition: background-color 0.2s, color 0.2s;
     border-radius: 5px;
     user-select: none; /* Prevent user from selecting the text inside cells */
   }
+}
   
+ 
+.row {
+  display: contents;
+}
   .cell:hover, .cell.selected {
     background-color: #4a90e2;
     color: #ffffff;
