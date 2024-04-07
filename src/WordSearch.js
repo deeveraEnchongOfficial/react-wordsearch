@@ -136,6 +136,7 @@ const WordSearch = () => {
     const selectedWord = selectedCells.map(({ row, col }) => grid[row][col].letter).join('');
     if (wordList.includes(selectedWord)) {
       setCorrectWords([...correctWords, selectedCells]);
+      console.log(correctWords);
     } else {
       const newGrid = grid.map(row =>
         row.map(cell => ({ ...cell, selected: false }))
@@ -145,33 +146,53 @@ const WordSearch = () => {
     setSelectedCells([]);
   };
 
+  const [seconds, setSeconds] = useState(0);
+  const [minutes, setMinutes] = useState(5);
+  
+useEffect(()=>{
+  setTimeout(()=>{
+    if(seconds===0){
+      setSeconds(59);
+      setMinutes(minutes-1);
+    }else{
+      setSeconds(seconds-1);
+    }
+  }, 1000);
+}, [seconds])
+
   return (
-    <div className="grid">
-      {grid.map((row, rowIndex) => (
-        <div key={rowIndex} className="row">
-          {row.map((cell, colIndex) => {
-            const isCorrectCell = correctWords.flat().some(pos => pos.row === rowIndex && pos.col === colIndex);
-            const cellClass = isCorrectCell ? 'cell correct' : cell.selected ? 'cell selected' : 'cell';
-            return (
-              <div
-                key={colIndex}
-                className={cellClass}
-                onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
-                onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
-                onMouseUp={handleMouseUp}
-                onTouchStart={(e) => handleTouchStart(e, rowIndex, colIndex)}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
-                data-row={rowIndex}
-                data-col={colIndex}
-              >
-                {cell.letter}
-              </div>
-            );
-          })}
-        </div>
-      ))}
-    </div>
+    <>
+      <div className='scoreBoard'>
+        <h3>Time Limit: {minutes}:{seconds < 10 ? "0"+seconds : seconds}</h3>
+        <h3>Score: 0pts</h3>
+      </div>
+      <div className="grid">
+        {grid.map((row, rowIndex) => (
+          <div key={rowIndex} className="row">
+            {row.map((cell, colIndex) => {
+              const isCorrectCell = correctWords.flat().some(pos => pos.row === rowIndex && pos.col === colIndex);
+              const cellClass = isCorrectCell ? 'cell correct' : cell.selected ? 'cell selected' : 'cell';
+              return (
+                <div
+                  key={colIndex}
+                  className={cellClass}
+                  onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
+                  onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
+                  onMouseUp={handleMouseUp}
+                  onTouchStart={(e) => handleTouchStart(e, rowIndex, colIndex)}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
+                  data-row={rowIndex}
+                  data-col={colIndex}
+                >
+                  {cell.letter}
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+    </>
   );
 };
 
