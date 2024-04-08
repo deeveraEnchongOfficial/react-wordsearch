@@ -32,15 +32,15 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 100%;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(20, 40px); /* Adjust based on your gridSize */
+  grid-template-columns: repeat(15, 40px); /* Adjust based on your gridSize */
   grid-gap: 5px;
   justify-content: center;
-  background-color: #ffffff;
+  background-color: #ffc130;
   padding: 10px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -56,7 +56,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #efefef;
+  background-color: #ffffff;
   color: #333;
   font-weight: bold;
   font-size: 20px;
@@ -68,7 +68,7 @@ body {
 
 .cell:hover,
 .cell.selected {
-  background-color: #4a90e2;
+  background-color: #3e61e2;
   color: #ffffff;
 }
 
@@ -87,5 +87,18 @@ body {
 }
 
 .cell.correct {
-  background-color: lightgreen; /* Highlight correctly guessed words */
+  background-color: #8ef2ce; /* Highlight correctly guessed words */
+  animation: correctAnimation 1.5s; /* Add throbbing animation */
+}
+
+@keyframes correctAnimation {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.14);
+  }
+  100% {
+    transform: scale(1);
+  }
 }

@@ -6,6 +6,7 @@ const WordList = ({ wordList, correctWords }) => {
   const [completedWords, setCompletedWords] = useState([]);
 
   useEffect(() => {
+    console.log("Correct Words:", correctWords);
     // Extract the words from correctWords
     const completed = correctWords.flatMap((item) => {
       if (Array.isArray(item)) {
@@ -20,9 +21,8 @@ const WordList = ({ wordList, correctWords }) => {
   }, [correctWords]);
 
   return (
-    <div>
-      <h2>Words:</h2>
-      <ul>
+    <div className='container'>
+      <ul className='list'>
         {wordList.map((word, index) => {
           const isCompleted = completedWords?.includes(word);
           // console.log(word, isCompleted);

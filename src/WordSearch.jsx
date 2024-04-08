@@ -3,7 +3,7 @@ import './WordSearch.css';
 import WordList from './WordList';
 
 const WordSearch = () => {
-  const gridSize = 20;
+  const gridSize = 15;
   const wordList = [
     'REACT', 'NODE', 'JAVA', 'CSS', 'HTML', 'JAVASCRIPT',
     'ANGULAR', 'VUE', 'REACTNATIVE', 'TYPESCRIPT', 'PYTHON',
