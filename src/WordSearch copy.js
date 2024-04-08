@@ -8,77 +8,23 @@ const WordSearch = () => {
     'ANGULAR', 'VUE', 'REACTNATIVE', 'TYPESCRIPT', 'PYTHON',
     'RUBY', 'PHP', 'SWIFT', 'KOTLIN', 'OBJECTIVEC', 'SQL',
     'MONGODB', 'POSTGRESQL', 'MYSQL',
-  ];
+  ].map(word => word.toUpperCase()); // Ensure all words are uppercase for comparison
 
   const [grid, setGrid] = useState([]);
-  const [selectedCells, setSelectedCells] = useState([]);
+  const [startPoint, setStartPoint] = useState(null);
+  const [endPoint, setEndPoint] = useState(null);
+  const [lines, setLines] = useState([]);
   const [correctWords, setCorrectWords] = useState([]);
 
   useEffect(() => {
     generateGrid();
-    // eslint-disable-next-line
   }, []);
 
   const generateGrid = () => {
     let initialGrid = Array.from({ length: gridSize }, () =>
-      Array.from({ length: gridSize }, () => ({ letter: '', selected: false }))
+      Array.from({ length: gridSize }, () => ({ letter: getRandomLetter(), selected: false }))
     );
-
-    const directions = [
-      { x: 0, y: 1 },
-      { x: 1, y: 0 },
-      { x: 1, y: 1 },
-      { x: 1, y: -1 },
-    ];
-
-    wordList.forEach(word => {
-      let placed = false;
-      while (!placed) {
-        const direction = directions[Math.floor(Math.random() * directions.length)];
-        const startPos = {
-          x: Math.floor(Math.random() * gridSize),
-          y: Math.floor(Math.random() * gridSize),
-        };
-
-        if (canPlaceWord(initialGrid, word, startPos, direction)) {
-          placeWord(initialGrid, word, startPos, direction);
-          placed = true;
-        }
-      }
-    });
-
-    initialGrid = initialGrid.map(row =>
-      row.map(cell => (cell.letter === '' ? { ...cell, letter: getRandomLetter() } : cell))
-    );
-
     setGrid(initialGrid);
-  };
-
-  const canPlaceWord = (grid, word, startPos, direction) => {
-    let pos = { ...startPos };
-    for (let i = 0; i < word.length; i++) {
-      if (
-        pos.x < 0 ||
-        pos.x >= gridSize ||
-        pos.y < 0 ||
-        pos.y >= gridSize ||
-        grid[pos.x][pos.y].letter !== ''
-      ) {
-        return false;
-      }
-      pos.x += direction.x;
-      pos.y += direction.y;
-    }
-    return true;
-  };
-
-  const placeWord = (grid, word, startPos, direction) => {
-    let pos = { ...startPos };
-    for (let i = 0; i < word.length; i++) {
-      grid[pos.x][pos.y].letter = word[i];
-      pos.x += direction.x;
-      pos.y += direction.y;
-    }
   };
 
   const getRandomLetter = () => {
@@ -86,63 +32,88 @@ const WordSearch = () => {
     return alphabet[Math.floor(Math.random() * alphabet.length)];
   };
 
-  const handleTouchStart = (event, row, col) => {
-    event.preventDefault(); // Prevent scrolling
-    handleSelectionChange(row, col);
-  };
-
-  const handleTouchMove = (event) => {
-    event.preventDefault(); // Prevent scrolling
-    if (event.touches.length > 0) {
-      const touch = event.touches[0];
-      const target = document.elementFromPoint(touch.clientX, touch.clientY);
-      if (target && target.dataset.row && target.dataset.col) {
-        handleSelectionChange(parseInt(target.dataset.row, 10), parseInt(target.dataset.col, 10));
-      }
-    }
-  };
-
-  const handleTouchEnd = () => {
-    finalizeSelection();
-  };
-
   const handleMouseDown = (row, col) => {
-    handleSelectionChange(row, col);
+    setStartPoint({ row, col });
+    setEndPoint(null); // Reset end point on new selection
   };
 
   const handleMouseEnter = (row, col) => {
-    if (selectedCells.length > 0) {
-      handleSelectionChange(row, col);
+    if (startPoint) {
+      setEndPoint({ row, col });
     }
   };
 
   const handleMouseUp = () => {
-    finalizeSelection();
+    if (startPoint && endPoint) {
+      finalizeSelection();
+      setStartPoint(null);
+      setEndPoint(null);
+    }
   };
 
-  const handleSelectionChange = (row, col) => {
-    const newSelectedCells = [...selectedCells, { row, col }];
-    const newGrid = grid.map((gridRow, rowIndex) =>
-      gridRow.map((cell, colIndex) => ({
+  useEffect(() => {
+    highlightCells();
+  }, [lines, startPoint, endPoint]); // Highlight cells as the selection changes
+
+  const highlightCells = () => {
+    if (!startPoint || !endPoint) return; // Only highlight if we have a valid selection
+
+    const tempLines = [...lines, { start: startPoint, end: endPoint }]; // Include the current selection for highlighting
+    const allSelectedCells = tempLines.flatMap(line => calculateLineCells(line.start, line.end));
+    const newGrid = grid.map((row, rowIndex) =>
+      row.map((cell, colIndex) => ({
         ...cell,
-        selected: newSelectedCells.some(sc => sc.row === rowIndex && sc.col === colIndex),
+        selected: allSelectedCells.some(cell => cell.row === rowIndex && cell.col === colIndex),
       }))
     );
     setGrid(newGrid);
-    setSelectedCells(newSelectedCells);
   };
 
   const finalizeSelection = () => {
+    if (!startPoint || !endPoint) return;
+
+    const selectedCells = calculateLineCells(startPoint, endPoint);
     const selectedWord = selectedCells.map(({ row, col }) => grid[row][col].letter).join('');
+
     if (wordList.includes(selectedWord)) {
-      setCorrectWords([...correctWords, selectedCells]);
+      setCorrectWords(prevWords => [...prevWords, selectedWord]);
+      setLines(prevLines => [...prevLines, { start: startPoint, end: endPoint }]);
     } else {
-      const newGrid = grid.map(row =>
-        row.map(cell => ({ ...cell, selected: false }))
-      );
-      setGrid(newGrid);
+      // Reset selection if the word is not correct
+      const newLines = lines.slice(); // Clone to trigger useEffect
+      setLines(newLines);
     }
-    setSelectedCells([]);
+  };
+
+  const calculateLineCells = (start, end) => {
+    const cells = [];
+    let x1 = start.col;
+    let y1 = start.row;
+    let x2 = end.col;
+    let y2 = end.row;
+
+    let dx = Math.abs(x2 - x1);
+    let dy = -Math.abs(y2 - y1);
+    let sx = x1 < x2 ? 1 : -1;
+    let sy = y1 < y2 ? 1 : -1;
+    let err = dx + dy;
+    let e2;
+
+    while (true) {
+      cells.push({ row: y1, col: x1 });
+      if (x1 === x2 && y1 === y2) break;
+      e2 = 2 * err;
+      if (e2 >= dy) {
+        err += dy;
+        x1 += sx;
+      }
+      if (e2 <= dx) {
+        err += dx;
+        y1 += sy;
+      }
+    }
+
+    return cells;
   };
 
   return (
@@ -150,8 +121,7 @@ const WordSearch = () => {
       {grid.map((row, rowIndex) => (
         <div key={rowIndex} className="row">
           {row.map((cell, colIndex) => {
-            const isCorrectCell = correctWords.flat().some(pos => pos.row === rowIndex && pos.col === colIndex);
-            const cellClass = isCorrectCell ? 'cell correct' : cell.selected ? 'cell selected' : 'cell';
+            const cellClass = cell.selected ? 'cell selected' : 'cell';
             return (
               <div
                 key={colIndex}
@@ -159,9 +129,6 @@ const WordSearch = () => {
                 onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
                 onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
                 onMouseUp={handleMouseUp}
-                onTouchStart={(e) => handleTouchStart(e, rowIndex, colIndex)}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
                 data-row={rowIndex}
                 data-col={colIndex}
               >
