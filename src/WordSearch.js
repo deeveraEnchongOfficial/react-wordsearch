@@ -136,7 +136,7 @@ const WordSearch = () => {
     const selectedWord = selectedCells.map(({ row, col }) => grid[row][col].letter).join('');
     if (wordList.includes(selectedWord)) {
       setCorrectWords([...correctWords, selectedCells]);
-      console.log(correctWords);
+      setScore(score+5);
     } else {
       const newGrid = grid.map(row =>
         row.map(cell => ({ ...cell, selected: false }))
@@ -146,6 +146,7 @@ const WordSearch = () => {
     setSelectedCells([]);
   };
 
+  const [score, setScore] = useState(0);
   const [seconds, setSeconds] = useState(0);
   const [minutes, setMinutes] = useState(5);
   
@@ -164,7 +165,7 @@ useEffect(()=>{
     <>
       <div className='scoreBoard'>
         <h3>Time Limit: {minutes}:{seconds < 10 ? "0"+seconds : seconds}</h3>
-        <h3>Score: 0pts</h3>
+        <h3>Score: {score}pts</h3>
       </div>
       <div className="grid">
         {grid.map((row, rowIndex) => (

@@ -43,8 +43,8 @@
 
   .scoreBoard{
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: black;
-    color: red;
+    background-color: yellowgreen;
+    color: white;
     width: 20%;
     padding: 20px;
     margin-bottom: 10px;
