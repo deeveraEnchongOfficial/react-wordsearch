@@ -123,6 +123,14 @@ const WordSearch = () => {
       }
     }
 
+    if (selectedCells.length > 1 && (initialMove.row !== null || initialMove.col !== null)) {
+      // If the change in x-direction (dx) is not equal to the initial row, reset the initial move
+      if (dy !== initialMove.col) {
+        setInitialMove({ row: null, col: null });
+        return false;
+      }
+    }
+
     // if (selectedCells.length > 1) {
     //   if (initialMove.row !== null || initialMove.col !== null) {
     //     if (dx != initialMove.row) {
