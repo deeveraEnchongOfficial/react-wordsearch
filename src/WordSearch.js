@@ -115,12 +115,29 @@ const WordSearch = () => {
       setInitialMove({ row: dx, col: dy });
     }
 
-    if (initialMove.row !== null || initialMove.col !== null) {
-      if (dx != initialMove.row) {
+    if (selectedCells.length > 1 && (initialMove.row !== null || initialMove.col !== null)) {
+      // If the change in x-direction (dx) is not equal to the initial row, reset the initial move
+      if (dx !== initialMove.row) {
         setInitialMove({ row: null, col: null });
         return false;
       }
     }
+
+    // if (selectedCells.length > 1) {
+    //   if (initialMove.row !== null || initialMove.col !== null) {
+    //     if (dx != initialMove.row) {
+    //       setInitialMove({ row: null, col: null });
+    //       return false;
+    //     }
+    //   }
+    // }
+
+    // if (initialMove.row !== null || initialMove.col !== null) {
+    //   if (dx != initialMove.row) {
+    //     setInitialMove({ row: null, col: null });
+    //     return false;
+    //   }
+    // }
 
     if (Math.abs(dx) > 1 || Math.abs(dy) > 1) return false;
     if (dx === 0 && dy === 0) return false;
