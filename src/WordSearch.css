@@ -1,24 +1,30 @@
+:root {
+  /* Calculate cell size based on the viewport size, ensuring the grid fits without scrolling */
+  --cell-size: calc(100vmin / 22); /* 20 cells + 1 gap on each side of the cells, adjusting for 20 cells and gaps */
+  --grid-gap: calc(var(--cell-size) / 20); /* Proportional gap based on cell size */
+}
+
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f5f5f5;
   margin: 0;
-  padding: 20px;
+  padding: 0; /* Removed padding to allow full use of the viewport */
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  overflow: hidden; /* Hide overflow to prevent scrolling */
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(20, 40px); /* Adjust based on your gridSize */
-  grid-gap: 5px;
+  grid-template-columns: repeat(20, var(--cell-size)); /* 20 columns, size based on --cell-size */
+  grid-gap: var(--grid-gap);
   justify-content: center;
   background-color: #ffffff;
-  padding: 10px;
+  padding: var(--grid-gap); /* Padding based on grid gap to ensure proper spacing */
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  position: relative;
 }
 
 .row {
@@ -26,19 +32,19 @@ body {
 }
 
 .cell {
-  width: 40px;
-  height: 40px;
+  width: var(--cell-size);
+  height: var(--cell-size);
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #efefef;
   color: #333;
   font-weight: bold;
-  font-size: 20px;
+  font-size: calc(var(--cell-size) / 3); /* Adjust font size based on cell size for readability */
   cursor: pointer;
   transition: background-color 0.2s, color 0.2s;
   border-radius: 5px;
-  user-select: none; /* Prevent user from selecting the text inside cells */
+  user-select: none;
 }
 
 .cell:hover, .cell.selected {
@@ -47,10 +53,9 @@ body {
 }
 
 .cell.correct {
-  background-color: lightgreen; /* Highlight correctly guessed words */
+  background-color: lightgreen;
 }
 
-/* Optional: Add animations for cell selection for a more dynamic feel */
 @keyframes selectedAnimation {
   from {
     transform: scale(1);
