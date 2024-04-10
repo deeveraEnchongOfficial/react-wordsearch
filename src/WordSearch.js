@@ -115,7 +115,10 @@ const WordSearch = () => {
       setInitialMove({ row: dx, col: dy });
     }
 
-    if (selectedCells.length > 1 && (initialMove.row !== null || initialMove.col !== null)) {
+    if (
+      selectedCells.length > 1 &&
+      (initialMove.row !== null || initialMove.col !== null)
+    ) {
       // If the change in x-direction (dx) is not equal to the initial row, reset the initial move
       if (dx !== initialMove.row) {
         setInitialMove({ row: null, col: null });
@@ -212,10 +215,48 @@ const WordSearch = () => {
       const touch = event.touches[0];
       const target = document.elementFromPoint(touch.clientX, touch.clientY);
       if (target && target.dataset.row && target.dataset.col) {
-        handleMouseEnter(
-          parseInt(target.dataset.row, 10),
-          parseInt(target.dataset.col, 10)
-        );
+        const row = parseInt(target.dataset.row, 10);
+        const col = parseInt(target.dataset.col, 10);
+        const nextCell = { row, col };
+        const lastCell = selectedCells[selectedCells.length - 1];
+
+        // Calculate the direction of the new selection
+        const dx = nextCell.row - lastCell.row;
+        const dy = nextCell.col - lastCell.col;
+
+        // Ensure the first movement direction is recorded or the movement continues in the same direction
+        if (selectedCells.length === 1) {
+          setInitialMove({ row: dx, col: dy });
+        } else if (
+          selectedCells.length > 1 &&
+          (initialMove.row !== null || initialMove.col !== null)
+        ) {
+          if (dx !== initialMove.row || dy !== initialMove.col) {
+            // If the movement is not in the same direction, invalidate the selection
+            setInitialMove({ row: null, col: null });
+            setSelectedCells([]);
+            const newGrid = grid.map((row) =>
+              row.map((cell) => ({ ...cell, selected: false }))
+            );
+            setGrid(newGrid);
+            return; // Exit without selecting the next cell
+          }
+        }
+
+        if (isValidNextCell(lastCell, nextCell)) {
+          // If the next cell is valid, proceed with selection
+          const newSelectedCells = [...selectedCells, nextCell];
+          setSelectedCells(newSelectedCells);
+          const newGrid = grid.map((gridRow, rowIndex) =>
+            gridRow.map((cell, colIndex) => ({
+              ...cell,
+              selected: newSelectedCells.some(
+                (sc) => sc.row === rowIndex && sc.col === colIndex
+              ),
+            }))
+          );
+          setGrid(newGrid);
+        }
       }
     }
   };
