@@ -1,0 +1,43 @@
+.word-search-container {
+  display: flex;
+  justify-content: center;
+  align-items: start;
+}
+
+.grid {
+  display: inline-grid;
+  grid-template-columns: repeat(10, 1fr); /* Based on gridSize */
+  grid-gap: 1px;
+}
+
+.grid-cell {
+  width: 2em; /* Or whatever size you want */
+  height: 2em;
+  border: 1px solid #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  cursor: pointer;
+  user-select: none;
+}
+
+.grid-cell.selected {
+  background-color: #aaf; /* Or any highlight color */
+}
+
+.word-list {
+  margin-left: 20px;
+  user-select: none;
+}
+
+.word-list .word {
+  padding: 5px;
+  cursor: default;
+}
+
+.word-list .word.found {
+  text-decoration: line-through;
+  color: green;
+}
+
