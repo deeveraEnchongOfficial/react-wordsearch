@@ -115,10 +115,7 @@ const WordSearch = () => {
       setInitialMove({ row: dx, col: dy });
     }
 
-    if (
-      selectedCells.length > 1 &&
-      (initialMove.row !== null || initialMove.col !== null)
-    ) {
+    if (selectedCells.length > 1 && (initialMove.row !== null || initialMove.col !== null)) {
       // If the change in x-direction (dx) is not equal to the initial row, reset the initial move
       if (dx !== initialMove.row) {
         setInitialMove({ row: null, col: null });
@@ -209,57 +206,61 @@ const WordSearch = () => {
     handleMouseDown(row, col);
   };
 
+  // const handleTouchMove = (event) => {
+  //   event.preventDefault(); // Prevent scrolling
+  //   if (event.touches.length > 0) {
+  //     const touch = event.touches[0];
+  //     const target = document.elementFromPoint(touch.clientX, touch.clientY);
+
+  //     console.log('whahhaha-touch',touch);
+  //     console.log('whahhaha-target',target);
+  //     if (target && target.dataset.row && target.dataset.col) {
+  //       handleMouseEnter(
+  //         parseInt(target.dataset.row, 10),
+  //         parseInt(target.dataset.col, 10)
+  //       );
+  //     }
+  //   }
+  // };
+
   const handleTouchMove = (event) => {
     event.preventDefault(); // Prevent scrolling
     if (event.touches.length > 0) {
       const touch = event.touches[0];
       const target = document.elementFromPoint(touch.clientX, touch.clientY);
+  
       if (target && target.dataset.row && target.dataset.col) {
-        const row = parseInt(target.dataset.row, 10);
-        const col = parseInt(target.dataset.col, 10);
-        const nextCell = { row, col };
+        const newRow = parseInt(target.dataset.row, 10);
+        const newCol = parseInt(target.dataset.col, 10);
+  
+        // Assuming lastCell is the last cell in the selectedCells array
         const lastCell = selectedCells[selectedCells.length - 1];
-
-        // Calculate the direction of the new selection
-        const dx = nextCell.row - lastCell.row;
-        const dy = nextCell.col - lastCell.col;
-
-        // Ensure the first movement direction is recorded or the movement continues in the same direction
-        if (selectedCells.length === 1) {
-          setInitialMove({ row: dx, col: dy });
-        } else if (
-          selectedCells.length > 1 &&
-          (initialMove.row !== null || initialMove.col !== null)
-        ) {
-          if (dx !== initialMove.row || dy !== initialMove.col) {
-            // If the movement is not in the same direction, invalidate the selection
-            setInitialMove({ row: null, col: null });
-            setSelectedCells([]);
-            const newGrid = grid.map((row) =>
-              row.map((cell) => ({ ...cell, selected: false }))
-            );
-            setGrid(newGrid);
-            return; // Exit without selecting the next cell
+  
+        if (lastCell) {
+          const dx = newRow - lastCell.row;
+          const dy = newCol - lastCell.col;
+  
+          // If this is the first move after the initial selection
+          if (selectedCells.length === 1) {
+            setInitialMove({ row: dx, col: dy });
+          } else {
+            // Ensure that the move is consistent with the initial direction
+            const isDiagonal = Math.abs(initialMove.row) === 1 && Math.abs(initialMove.col) === 1;
+            const movingDiagonally = Math.abs(dx) === 1 && Math.abs(dy) === 1;
+            const directionChanged = (isDiagonal && !movingDiagonally) || (!isDiagonal && movingDiagonally);
+  
+            // If trying to change direction (diagonal to non-diagonal or vice versa), return early
+            if (directionChanged) {
+              return;
+            }
           }
         }
-
-        if (isValidNextCell(lastCell, nextCell)) {
-          // If the next cell is valid, proceed with selection
-          const newSelectedCells = [...selectedCells, nextCell];
-          setSelectedCells(newSelectedCells);
-          const newGrid = grid.map((gridRow, rowIndex) =>
-            gridRow.map((cell, colIndex) => ({
-              ...cell,
-              selected: newSelectedCells.some(
-                (sc) => sc.row === rowIndex && sc.col === colIndex
-              ),
-            }))
-          );
-          setGrid(newGrid);
-        }
+  
+        handleMouseEnter(newRow, newCol);
       }
     }
   };
+  
 
   const handleTouchEnd = () => {
     finalizeSelection();
