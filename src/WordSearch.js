@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./WordSearch.css";
+import { CountdownCircleTimer } from "react-countdown-circle-timer";
 
 const WordSearch = () => {
   const gridSize = 20;
@@ -285,38 +286,79 @@ const WordSearch = () => {
     setSelectedCells([]);
   };
 
+  const [timer, setTimer] = React.useState(0);
+  const [color, setColor] = React.useState("green");
+  const [score, setScore] = React.useState(0);
+  
+  const renderTime = ({ remainingTime }) => {
+    if(remainingTime<=10){
+      setColor("#A30000");
+    }else if(remainingTime<=30){
+      setColor("#DAA520");
+    }else{
+      // retention
+    }
+    if (remainingTime === 0) {
+      return <div className="font-bold text-lg animate-bounce">Times Up</div>;
+    }
+
+    return (
+      <div className="timer">
+        <div className="text">Remaining</div>
+        <div className="value"><p className="font-bold text-xl">{remainingTime}</p></div>
+        <div className="text">seconds</div>
+      </div>
+    );
+  };
+
   return (
-    <div className="grid">
-      {grid.map((row, rowIndex) => (
-        <div key={rowIndex} className="row">
-          {row.map((cell, colIndex) => {
-            const isCorrectCell = correctWords
-              .flat()
-              .some((pos) => pos.row === rowIndex && pos.col === colIndex);
-            const cellClass = isCorrectCell
-              ? "cell correct"
-              : cell.selected
-              ? "cell selected"
-              : "cell";
-            return (
-              <div
-                key={colIndex}
-                className={cellClass}
-                onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
-                onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
-                onMouseUp={handleMouseUp}
-                onTouchStart={(e) => handleTouchStart(e, rowIndex, colIndex)}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
-                data-row={rowIndex}
-                data-col={colIndex}
-              >
-                {cell.letter}
-              </div>
-            );
-          })}
+    <div className="flex flex-col md:flex-row space-x-20 items-center justify-center bg-neutral-400 h-full w-full">
+      <div className="space-y-14">
+        <CountdownCircleTimer
+          key={timer}
+          isPlaying
+          duration={50}
+          colors={color}
+          onComplete={() => [false, 1000]}
+        >
+          {renderTime}
+        </CountdownCircleTimer>
+        <div className="">
+          <p className="font-semibold animate-pulse">Score: {score}/20</p>
         </div>
-      ))}
+      </div>
+      <div className="grid">
+        {grid.map((row, rowIndex) => (
+          <div key={rowIndex} className="row">
+            {row.map((cell, colIndex) => {
+              const isCorrectCell = correctWords
+                .flat()
+                .some((pos) => pos.row === rowIndex && pos.col === colIndex);
+              const cellClass = isCorrectCell
+                ? "cell correct"
+                : cell.selected
+                ? "cell selected"
+                : "cell";
+              return (
+                <div
+                  key={colIndex}
+                  className={cellClass}
+                  onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
+                  onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
+                  onMouseUp={handleMouseUp}
+                  onTouchStart={(e) => handleTouchStart(e, rowIndex, colIndex)}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
+                  data-row={rowIndex}
+                  data-col={colIndex}
+                >
+                  {cell.letter}
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

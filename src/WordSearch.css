@@ -12,7 +12,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
   overflow: hidden; /* Hide overflow to prevent scrolling */
 }
 
@@ -20,11 +19,13 @@ body {
   display: grid;
   grid-template-columns: repeat(20, var(--cell-size)); /* 20 columns, size based on --cell-size */
   grid-gap: var(--grid-gap);
-  justify-content: center;
+  /* justify-content: center; */
   background-color: #ffffff;
-  padding: var(--grid-gap); /* Padding based on grid gap to ensure proper spacing */
+  /*padding: var(--grid-gap);  Padding based on grid gap to ensure proper spacing */
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .row {
