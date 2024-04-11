@@ -1,11 +1,15 @@
 :root {
   /* Calculate cell size based on the viewport size, ensuring the grid fits without scrolling */
-  --cell-size: calc(100vmin / 22); /* 20 cells + 1 gap on each side of the cells, adjusting for 20 cells and gaps */
-  --grid-gap: calc(var(--cell-size) / 20); /* Proportional gap based on cell size */
+  --cell-size: calc(
+    100vmin / 22
+  ); /* 15 cells + 1 gap on each side of the cells, adjusting for 15 cells and gaps */
+  --grid-gap: calc(
+    var(--cell-size) / 15
+  ); /* Proportional gap based on cell size */
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f5f5f5;
   margin: 0;
   padding: 0; /* Removed padding to allow full use of the viewport */
@@ -18,11 +22,16 @@ body {
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(20, var(--cell-size)); /* 20 columns, size based on --cell-size */
-  grid-gap: var(--grid-gap);
+  grid-template-columns: repeat(
+    15,
+    var(--cell-size)
+  ); /* 15 columns, size based on --cell-size */
+  grid-gap: calc(var(--grid-gap) * 2);
   justify-content: center;
-  background-color: #ffffff;
-  padding: var(--grid-gap); /* Padding based on grid gap to ensure proper spacing */
+  background-color: #ffc130;
+  padding: calc(
+    var(--grid-gap) * 3
+  ); /* Padding based on grid gap to ensure proper spacing */
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -37,23 +46,39 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #efefef;
+  background-color: #ffffff;
   color: #333;
-  font-weight: bold;
-  font-size: calc(var(--cell-size) / 3); /* Adjust font size based on cell size for readability */
+  font-weight: 900;
+  font-size: calc(
+    var(--cell-size) / 2.5
+  ); /* Adjust font size based on cell size for readability */
   cursor: pointer;
   transition: background-color 0.2s, color 0.2s;
   border-radius: 5px;
   user-select: none;
 }
 
-.cell:hover, .cell.selected {
-  background-color: #4a90e2;
+.cell:hover,
+.cell.selected {
+  background-color: #3e61e2;
   color: #ffffff;
 }
 
 .cell.correct {
-  background-color: lightgreen;
+  background-color: #8ef2ce;
+  animation: correctAnimation 1.5s;
+}
+
+@keyframes correctAnimation {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.14);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 @keyframes selectedAnimation {
