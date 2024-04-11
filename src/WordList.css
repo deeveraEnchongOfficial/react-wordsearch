@@ -1,0 +1,45 @@
+.completed {
+  position: relative;
+  font-style: italic;
+  font-weight: normal;
+}
+
+.completed::before {
+  content: "";
+  position: absolute;
+  top: 35%;
+  left: 0;
+  width: 0%;
+  height: 2px; /* Adjust thickness of the line */
+  background-color: black; /* Adjust color of the line */
+  animation: lineThrough 1s ease forwards; /* Adjust animation duration */
+}
+
+@keyframes lineThrough {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+li {
+  padding-bottom: 10px;
+  font-weight: bold;
+}
+
+.container {
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  padding: 10px 20px 10px 20px;
+  background-color: #ffc130;
+  border-radius: 10px;
+  margin-right: 20px;
+}
+
+.list {
+  padding: 0px;
+  list-style-type: none;
+}

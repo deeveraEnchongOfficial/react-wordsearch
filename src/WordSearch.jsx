@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./WordSearch.css";
+import WordList from './WordList';
 
 const WordSearch = () => {
-  const gridSize = 20;
+  const gridSize = 15;
   const wordList = [
     "REACT",
     "NODE",
@@ -283,7 +284,7 @@ const WordSearch = () => {
       .map(({ row, col }) => grid[row][col].letter)
       .join("");
     if (wordList.includes(selectedWord)) {
-      setCorrectWords([...correctWords, selectedCells]);
+      setCorrectWords([...correctWords, selectedCells, selectedWord]);
     } else {
       const newGrid = grid.map((row) =>
         row.map((cell) => ({ ...cell, selected: false }))
@@ -294,38 +295,40 @@ const WordSearch = () => {
   };
 
   return (
-    <div className="grid">
-      {grid.map((row, rowIndex) => (
-        <div key={rowIndex} className="row">
-          {row.map((cell, colIndex) => {
-            const isCorrectCell = correctWords
-              .flat()
-              .some((pos) => pos.row === rowIndex && pos.col === colIndex);
-            const cellClass = isCorrectCell
-              ? "cell correct"
-              : cell.selected
-              ? "cell selected"
-              : "cell";
-            return (
-              <div
-                key={colIndex}
-                className={cellClass}
-                onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
-                onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
-                onMouseUp={handleMouseUp}
-                onTouchStart={(e) => handleTouchStart(e, rowIndex, colIndex)}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
-                data-row={rowIndex}
-                data-col={colIndex}
-              >
-                {cell.letter}
-              </div>
-            );
-          })}
-        </div>
-      ))}
-    </div>
+    <><WordList wordList={wordList} correctWords={correctWords}/>
+      <div className="grid">
+        {grid.map((row, rowIndex) => (
+          <div key={rowIndex} className="row">
+            {row.map((cell, colIndex) => {
+              const isCorrectCell = correctWords
+                .flat()
+                .some((pos) => pos.row === rowIndex && pos.col === colIndex);
+              const cellClass = isCorrectCell
+                ? "cell correct"
+                : cell.selected
+                ? "cell selected"
+                : "cell";
+              return (
+                <div
+                  key={colIndex}
+                  className={cellClass}
+                  onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
+                  onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
+                  onMouseUp={handleMouseUp}
+                  onTouchStart={(e) => handleTouchStart(e, rowIndex, colIndex)}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
+                  data-row={rowIndex}
+                  data-col={colIndex}
+                >
+                  {cell.letter}
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+    </>
   );
 };
 
